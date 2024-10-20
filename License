@@ -1,0 +1,143 @@
+
+### **2. `student_record_system.py`**
+Here’s the code for the **Student Record System**.
+
+```python
+# Abstract class Person
+class Person:
+    def __init__(self, id, name):
+        self._id = id  # private attribute
+        self._name = name  # private attribute
+    
+    def get_id(self):
+        return self._id
+
+    def get_name(self):
+        return self._name
+
+
+# Student class inheriting from Person
+class Student(Person):
+    def __init__(self, id, name):
+        super().__init__(id, name)
+        self.courses = []  # list of courses the student is enrolled in
+    
+    def enroll(self, course):
+        self.courses.append(course)
+        course.add_student(self)
+
+    def get_courses(self):
+        return [course.course_name for course in self.courses]
+
+
+# Instructor class inheriting from Person
+class Instructor(Person):
+    def __init__(self, id, name):
+        super().__init__(id, name)
+        self.courses_taught = []
+
+    def assign_course(self, course):
+        self.courses_taught.append(course)
+    
+    def get_courses(self):
+        return [course.course_name for course in self.courses_taught]
+
+
+# Course class
+class Course:
+    def __init__(self, course_id, course_name):
+        self.course_id = course_id
+        self.course_name = course_name
+        self.enrolled_students = []
+
+    def add_student(self, student):
+        self.enrolled_students.append(student)
+    
+    def get_students(self):
+        return [student.get_name() for student in self.enrolled_students]
+
+
+# Main System Class to manage records
+class StudentRecordSystem:
+    def __init__(self):
+        self.students = []
+        self.courses = []
+        self.instructors = []
+    
+    def add_student(self, id, name):
+        student = Student(id, name)
+        self.students.append(student)
+    
+    def add_course(self, course_id, course_name):
+        course = Course(course_id, course_name)
+        self.courses.append(course)
+
+    def add_instructor(self, id, name):
+        instructor = Instructor(id, name)
+        self.instructors.append(instructor)
+    
+    def enroll_student_in_course(self, student_id, course_id):
+        student = self.search_student_by_id(student_id)
+        course = self.search_course_by_id(course_id)
+        if student and course:
+            student.enroll(course)
+            print(f"Student {student.get_name()} enrolled in {course.course_name}")
+        else:
+            print("Enrollment failed. Either student or course not found.")
+
+    def search_student_by_id(self, student_id):
+        for student in self.students:
+            if student.get_id() == student_id:
+                return student
+        return None
+
+    def search_course_by_id(self, course_id):
+        for course in self.courses:
+            if course.course_id == course_id:
+                return course
+        return None
+
+    def display_student_courses(self, student_id):
+        student = self.search_student_by_id(student_id)
+        if student:
+            print(f"Courses for {student.get_name()}: {', '.join(student.get_courses())}")
+        else:
+            print("Student not found.")
+
+    def display_course_students(self, course_id):
+        course = self.search_course_by_id(course_id)
+        if course:
+            print(f"Students enrolled in {course.course_name}: {', '.join(course.get_students())}")
+        else:
+            print("Course not found.")
+
+
+# Example Usage
+def main():
+    system = StudentRecordSystem()
+
+    # Add some students
+    system.add_student(1, "John Doe")
+    system.add_student(2, "Jane Smith")
+    
+    # Add some courses
+    system.add_course("CS101", "Introduction to Computer Science")
+    system.add_course("MATH202", "Calculus II")
+    
+    # Add an instructor
+    system.add_instructor(101, "Prof. Alan Turing")
+    
+    # Enroll students in courses
+    system.enroll_student_in_course(1, "CS101")
+    system.enroll_student_in_course(2, "MATH202")
+
+    # Display student's courses
+    system.display_student_courses(1)
+    system.display_student_courses(2)
+
+    # Display students enrolled in a course
+    system.display_course_students("CS101")
+    system.display_course_students("MATH202")
+
+if __name__ == "__main__":
+    main()
