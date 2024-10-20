@@ -1,8 +1,3 @@
-
-### **2. `student_record_system.py`**
-Here’s the code for the **Student Record System**.
-
-```python
 # Abstract class Person
 class Person:
     def __init__(self, id, name):
